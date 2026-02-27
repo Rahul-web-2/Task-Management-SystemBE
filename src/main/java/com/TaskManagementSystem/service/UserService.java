@@ -3,7 +3,6 @@ package com.TaskManagementSystem.service;
 import com.TaskManagementSystem.model.User;
 import com.TaskManagementSystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +17,14 @@ public class UserService {
 
     public User createUsers(User user) {
 
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
+
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -43,15 +45,8 @@ public class UserService {
 
     public User login(String email, String rawPassword) {
 
-        User user = userRepository.findByEmail(email)
+        return userRepository.findByEmail(email)
+                .filter(user -> passwordEncoder.matches(rawPassword, user.getPassword()))
                 .orElseThrow(() -> new RuntimeException("Invalid Email or Password"));
-
-        boolean isMatch = passwordEncoder.matches(rawPassword, user.getPassword());
-
-        if (!isMatch) {
-            throw new RuntimeException("Invalid email or password");
-        }
-
-        return user;
     }
 }
