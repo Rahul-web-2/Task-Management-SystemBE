@@ -8,16 +8,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/task")
 @RequiredArgsConstructor
 public class TaskController {
 
     private final TaskService taskService;
 
-    @PostMapping("/user/{userId}")
-    public Task createTask(@PathVariable Long userId,
+    @PostMapping("/user/{userEmail}")
+    public Task createTask(@PathVariable String userEmail,
                            @RequestBody Task task) {
-        return taskService.createTask(userId, task);
+        return taskService.createTask(userEmail, task);
     }
 
     @GetMapping

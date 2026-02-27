@@ -17,8 +17,8 @@ public class TaskService {
     private final UserRepository userRepository;
 
 
-    public Task createTask(Long userId, Task task) {
-        User user = userRepository.findById(userId)
+    public Task createTask(String userEmail, Task task) {
+        User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         task.setUser(user);
