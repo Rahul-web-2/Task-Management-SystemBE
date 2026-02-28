@@ -3,6 +3,8 @@ package com.TaskManagementSystem.controller;
 import com.TaskManagementSystem.model.User;
 import com.TaskManagementSystem.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,7 +37,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public User login(@RequestBody User user){
-        return userService.login(user.getEmail(), user.getPassword());
+    public ResponseEntity<?> login(@RequestBody User user) {
+        try {
+            User existingUser = userService.login(user.getEmail(), user.getPassword());
+            return ResponseEntity.ok(existingUser);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 }
