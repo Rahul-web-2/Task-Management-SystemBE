@@ -20,6 +20,11 @@ public class TaskController {
         return taskService.createTask(userEmail, task);
     }
 
+    @PutMapping("/update/{id}")
+    public Task updateTask(@PathVariable Long id, @RequestBody Task task){
+        return taskService.updateTask(id ,task);
+    }
+
     @GetMapping
     public List<Task> getAllTasks() {
         return taskService.getAllTasks();
