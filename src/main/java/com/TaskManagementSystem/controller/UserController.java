@@ -1,0 +1,50 @@
+package com.TaskManagementSystem.controller;
+
+import com.TaskManagementSystem.model.User;
+import com.TaskManagementSystem.service.UserService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@CrossOrigin(origins = "http://localhost:5173")
+@RestController
+@RequestMapping("/api/users")
+@RequiredArgsConstructor
+public class UserController {
+
+    private final UserService userService;
+
+    @PostMapping("/create")
+    public User createUser(@Valid @RequestBody User user) {
+        return userService.createUsers(user);
+    }
+
+    @GetMapping()
+    public List<User> getAllUser() {
+        return userService.getAllUsers();
+    }
+
+    @GetMapping("/{email}")
+    public User getUser(@PathVariable String email) {
+        return userService.getByEmail(email);
+    }
+
+    @DeleteMapping("/{email}")
+    public void deleteUser(@PathVariable String email) {
+        userService.deleteUser(email);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User user) {
+        try {
+            User existingUser = userService.login(user.getEmail(), user.getPassword());
+            return ResponseEntity.ok(existingUser);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+}
