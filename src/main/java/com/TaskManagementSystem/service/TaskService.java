@@ -47,4 +47,8 @@ public class TaskService {
         return taskRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Task Not Found"));
     }
+
+    public List<Task> getTasksByUserEmail(String email){
+        return taskRepository.findByUserEmail(email);
+    }
 }

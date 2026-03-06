@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api/task")
 @RequiredArgsConstructor
@@ -18,6 +19,11 @@ public class TaskController {
     public Task createTask(@PathVariable String userEmail,
                            @RequestBody Task task) {
         return taskService.createTask(userEmail, task);
+    }
+
+    @GetMapping("/user/{userEmail}")
+    public List<Task> getTasksByUserEmail(@PathVariable String userEmail){
+        return taskService.getTasksByUserEmail(userEmail);
     }
 
     @PutMapping("/update/{id}")
