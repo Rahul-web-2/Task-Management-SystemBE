@@ -100,11 +100,6 @@ src
 2. User logs in
 3. Server validates credentials
 
-Example Header:
-
-```
-Authorization: Bearer <JWT_TOKEN>
-```
 
 ---
 
