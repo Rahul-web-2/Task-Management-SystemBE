@@ -1,6 +1,6 @@
 # 📋 Task Management System – Backend
 
-A **secure and scalable RESTful backend API** for a Task Management System built using **Spring Boot, JWT Authentication, and MySQL**.
+A **secure and scalable RESTful backend API** for a Task Management System built using **Spring Boot, and MySQL**.
 
 This project provides APIs for **user authentication and task management**, including creating, updating, deleting, and tracking tasks.
 
