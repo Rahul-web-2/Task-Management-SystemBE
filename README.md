@@ -202,14 +202,6 @@ Content-Type: application/json
 }
 ```
 
-Response:
-
-```json
-{
-  "token": "JWT_TOKEN_HERE"
-}
-```
-
 ---
 
 # 🔒 Security Best Practices Implemented
