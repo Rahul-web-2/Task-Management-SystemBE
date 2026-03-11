@@ -51,6 +51,8 @@ public class TaskService {
     }
 
     public List<Task> getTasksByUserId(Long userId) {
-        return taskRepository.findByUserId(userId);
+        List<Task> tasks = taskRepository.findByUser_Id(userId);
+        System.out.println("Tasks found: " + tasks.size());
+        return tasks;
     }
 }
