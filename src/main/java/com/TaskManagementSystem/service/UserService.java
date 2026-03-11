@@ -45,8 +45,13 @@ public class UserService {
 
     public User login(String email, String rawPassword) {
 
-        return userRepository.findByEmail(email)
-                .filter(user -> passwordEncoder.matches(rawPassword, user.getPassword()))
-                .orElseThrow(() -> new RuntimeException("Invalid Email or Password"));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+
+        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+            throw new RuntimeException("Invalid Email or Password");
+        }
+
+        return user;
     }
 }
