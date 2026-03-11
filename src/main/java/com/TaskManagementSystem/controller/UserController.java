@@ -1,5 +1,6 @@
 package com.TaskManagementSystem.controller;
 
+import com.TaskManagementSystem.DTO.UserResponse;
 import com.TaskManagementSystem.model.User;
 import com.TaskManagementSystem.service.UserService;
 import jakarta.validation.Valid;
@@ -40,7 +41,13 @@ public class UserController {
     public ResponseEntity<?> login(@RequestBody User user) {
         try {
             User existingUser = userService.login(user.getEmail(), user.getPassword());
-            return ResponseEntity.ok(existingUser);
+
+            UserResponse response = new UserResponse(
+                    existingUser.getId(),
+                    existingUser.getName()
+            );
+
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
