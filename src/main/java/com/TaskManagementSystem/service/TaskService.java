@@ -17,11 +17,13 @@ public class TaskService {
     private final UserRepository userRepository;
 
 
-    public Task createTask(String userEmail, Task task) {
-        User user = userRepository.findByEmail(userEmail)
+    public Task createTask(Long userId, Task task) {
+
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         task.setUser(user);
+
         return taskRepository.save(task);
     }
 
@@ -48,7 +50,7 @@ public class TaskService {
                 .orElseThrow(()-> new RuntimeException("Task Not Found"));
     }
 
-    public List<Task> getTasksByUserEmail(String email){
-        return taskRepository.findByUserEmail(email);
+    public List<Task> getTasksByUserId(Long userId) {
+        return taskRepository.findByUserId(userId);
     }
 }
