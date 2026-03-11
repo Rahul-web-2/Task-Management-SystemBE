@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./mvnw compile:*)",
+      "Bash(set:)",
+      "Bash(openssl rand:*)",
+      "Bash(export:*)"
+    ]
+  }
+}
