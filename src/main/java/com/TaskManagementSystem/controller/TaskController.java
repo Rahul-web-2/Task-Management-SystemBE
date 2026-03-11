@@ -15,15 +15,14 @@ public class TaskController {
 
     private final TaskService taskService;
 
-    @PostMapping("/user/{userEmail}")
-    public Task createTask(@PathVariable String userEmail,
-                           @RequestBody Task task) {
-        return taskService.createTask(userEmail, task);
+    @PostMapping("/user/{userId}")
+    public Task createTask(@PathVariable Long userId, @RequestBody Task task) {
+        return taskService.createTask(userId, task);
     }
 
-    @GetMapping("/user/{userEmail}")
-    public List<Task> getTasksByUserEmail(@PathVariable String userEmail){
-        return taskService.getTasksByUserEmail(userEmail);
+    @GetMapping("/user/{userId}")
+    public List<Task> getTasksByUserId(@PathVariable Long userId) {
+        return taskService.getTasksByUserId(userId);
     }
 
     @PutMapping("/update/{id}")
