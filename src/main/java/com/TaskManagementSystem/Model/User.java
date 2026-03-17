@@ -1,7 +1,7 @@
-package com.TaskManagementSystem.model;
+package com.TaskManagementSystem.Model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.validation.constraints.*;
+import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,20 +19,20 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    @NotBlank
+    @Column(nullable = false)
+    @NonNull
     private String name;
 
-    @Column(unique = true, nullable = false)
-    @Email
-    @NotBlank
+    @Column(nullable = false, unique = true)
+    @NonNull
     private String email;
 
     @Column(nullable = false)
-    @NotBlank
+    @NonNull
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Task> tasks;
+
 }
