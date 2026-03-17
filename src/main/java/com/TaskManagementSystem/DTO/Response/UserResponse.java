@@ -1,4 +1,4 @@
-package com.TaskManagementSystem.DTO;
+package com.TaskManagementSystem.DTO.Response;
 
 import lombok.*;
 
@@ -7,6 +7,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {
-    private Long id;
+
     private String name;
+    private String email;
+
 }

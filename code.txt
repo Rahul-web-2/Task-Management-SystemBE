@@ -1,0 +1,86 @@
+Example Implementation with ModelMapper
+Entity Class
+
+@Entity
+public class User {
+   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+   private int id;
+   private String name;
+   private String email;
+   private String password;
+   // getters and setters
+}
+
+DTO Class
+
+public class UserDto {
+   private String name;
+   private String email;
+   // getters and setters
+}
+
+Service Class
+
+@Service
+public class UserServiceImpl implements UserService {
+   @Autowired private UserRepository userRepository;
+   @Autowired private ModelMapper modelMapper;
+   @Override
+   public UserDto getUser(int userId) {
+       User user = userRepository.findById(userId).orElseThrow();
+       return modelMapper.map(user, UserDto.class);
+   }
+}
+
+Controller Class
+
+@RestController
+@RequestMapping("/api/user")
+public class UserController {
+   @Autowired private UserServiceImpl userService;
+   @GetMapping("/get/{id}")
+   public ResponseEntity<UserDto> getUser(@PathVariable int id) {
+       return ResponseEntity.ok(userService.getUser(id));
+   }
+}
+
+ModelMapper Bean
+@Configuration
+public class AppConfig {
+   @Bean
+   public ModelMapper modelMapper() {
+       return new ModelMapper();
+   }
+}
+
+MapStruct Example
+
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
+@Mapper(componentModel = "spring")
+public interface UserMapper {
+    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+
+    UserDTO toDto(User user);
+    User toEntity(UserDTO userDTO);
+}
+
+
+@Component
+public class UserMapper {
+
+    public UserDTO toDTO(User user) {
+        UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        return dto;
+    }
+
+    public User toEntity(CreateUserRequest request) {
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        return user;
+    }
+}
