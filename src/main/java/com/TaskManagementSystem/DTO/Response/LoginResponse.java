@@ -11,6 +11,4 @@ public class LoginResponse {
     private String message;
     private UserResponse user;
 
-    // private String token; //include a token for authentication if needed
-
 }
