@@ -5,7 +5,6 @@ import com.TaskManagementSystem.Model.User;
 import com.TaskManagementSystem.Repository.TaskRepo;
 import com.TaskManagementSystem.Repository.UserRepo;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,14 +17,19 @@ public class TaskService {
     private final UserRepo userRepository;
 
 
-    public Task createTask(Long userId, Task task) {
+    public Task createTask(String email, Task task) {
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         task.setUser(user);
 
         return taskRepository.save(task);
+    }
+
+    public Task getTaskById(Long id) {
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
     }
 
     public Task updateTask(Long id, Task updatedTask){
@@ -38,6 +42,13 @@ public class TaskService {
         task.setPriority(updatedTask.getPriority());
 
         return taskRepository.save(task);
+    }
+
+    public void deleteTask(Long id) {
+        if (!taskRepository.existsById(id)) {
+            throw new RuntimeException("Task not found");
+        }
+        taskRepository.deleteById(id);
     }
 
     public List<Task> getTasksByUser(String email) {
