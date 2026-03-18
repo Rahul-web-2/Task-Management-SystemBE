@@ -20,7 +20,6 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
-    // ── Sign Up ──────────────────────────────────────────────────────────────
     public LoginResponse createUser(UserRequest requestDTO) {
 
         Optional<User> existingUser = userRepo.findByEmail(requestDTO.getEmail());
@@ -35,7 +34,6 @@ public class UserService {
         return new LoginResponse("User created successfully", userMapper.toResponseDTO(user));
     }
 
-    // ── Login ────────────────────────────────────────────────────────────────
     public LoginResponse loginUser(LoginRequest requestDTO) {
 
         Optional<User> optionalUser = userRepo.findByEmail(requestDTO.getEmail());
