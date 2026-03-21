@@ -17,7 +17,7 @@ public class TaskController {
     private final TaskService taskService;
 
     // ✅ Create task for logged-in user
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Task> createTask(@RequestBody Task task, Authentication auth) {
         String email = auth.getName(); // comes from JWT filter
         Task createdTask = taskService.createTask(email, task);
