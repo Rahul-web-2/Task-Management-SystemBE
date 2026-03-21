@@ -10,5 +10,6 @@ public class LoginResponse {
 
     private String message;
     private UserResponse user;
+    private String token;
 
 }
