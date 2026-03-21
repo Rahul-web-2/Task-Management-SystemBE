@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,11 +28,15 @@ public class TaskService {
 
     // ✅ Get a task by ID, ensure it belongs to the user
     public Task getTaskById(Long id, String email) {
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+        Optional<Task> optionalTask = taskRepository.findById(id);
 
+        if (optionalTask.isEmpty()) {
+            return null; // Task not found, frontend can handle gracefully
+        }
+
+        Task task = optionalTask.get();
         if (!task.getUser().getEmail().equals(email)) {
-            throw new RuntimeException("Access denied"); // 🔒 Prevent access to other users
+            throw new RuntimeException("Access denied");
         }
 
         return task;
