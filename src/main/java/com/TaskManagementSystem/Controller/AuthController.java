@@ -38,10 +38,10 @@ public class AuthController {
         if (res.getToken() != null) {
             ResponseCookie cookie = ResponseCookie.from("token", res.getToken())
                     .httpOnly(true)
-                    .secure(true) // ⚠️ false in local (http), true in prod (https)
+                    .secure(false) // ⚠️ false in local (http), true in prod (https)
                     .path("/")
                     .maxAge(Duration.ofHours(1))
-                    .sameSite("Strict")
+                    .sameSite("None")
                     .build();
 
             response.addHeader("Set-Cookie", cookie.toString());
@@ -75,10 +75,10 @@ public class AuthController {
                 //SET COOKIE
                 ResponseCookie cookie = ResponseCookie.from("token", res.getToken())
                         .httpOnly(true)
-                        .secure(true) // ⚠️ false for local dev
+                        .secure(false) // ⚠️ false for local dev
                         .path("/")
                         .maxAge(Duration.ofHours(1))
-                        .sameSite("Strict")
+                        .sameSite("None")
                         .build();
 
                 response.addHeader("Set-Cookie", cookie.toString());
@@ -95,11 +95,10 @@ public class AuthController {
 
         ResponseCookie cookie = ResponseCookie.from("token", "")
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path("/")
-                .domain("localhost")
                 .maxAge(0)
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
 
         response.addHeader("Set-Cookie", cookie.toString());
