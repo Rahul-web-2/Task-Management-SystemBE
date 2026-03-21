@@ -38,7 +38,7 @@ public class AuthController {
         if (res.getToken() != null) {
             ResponseCookie cookie = ResponseCookie.from("token", res.getToken())
                     .httpOnly(true)
-                    .secure(false) // ⚠️ false in local (http), true in prod (https)
+                    .secure(true) // ⚠️ false in local (http), true in prod (https)
                     .path("/")
                     .maxAge(Duration.ofHours(1))
                     .sameSite("None")
@@ -75,7 +75,7 @@ public class AuthController {
                 //SET COOKIE
                 ResponseCookie cookie = ResponseCookie.from("token", res.getToken())
                         .httpOnly(true)
-                        .secure(false) // ⚠️ false for local dev
+                        .secure(true) // ⚠️ false for local dev
                         .path("/")
                         .maxAge(Duration.ofHours(1))
                         .sameSite("None")
@@ -95,7 +95,7 @@ public class AuthController {
 
         ResponseCookie cookie = ResponseCookie.from("token", "")
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
                 .maxAge(0)
                 .sameSite("None")
