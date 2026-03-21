@@ -1,10 +1,9 @@
-package com.TaskManagementSystem.ModelMapper;
+package com.TaskManagementSystem.Mapper;
 
 import com.TaskManagementSystem.DTO.Request.UserRequest;
 import com.TaskManagementSystem.DTO.Response.UserResponse;
 import com.TaskManagementSystem.Model.User;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {

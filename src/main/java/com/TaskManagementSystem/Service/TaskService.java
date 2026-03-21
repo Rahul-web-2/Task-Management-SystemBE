@@ -16,25 +16,35 @@ public class TaskService {
     private final TaskRepo taskRepository;
     private final UserRepo userRepository;
 
-
+    // ✅ Create a task for the logged-in user
     public Task createTask(String email, Task task) {
-
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         task.setUser(user);
-
         return taskRepository.save(task);
     }
 
-    public Task getTaskById(Long id) {
-        return taskRepository.findById(id)
+    // ✅ Get a task by ID, ensure it belongs to the user
+    public Task getTaskById(Long id, String email) {
+        Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        if (!task.getUser().getEmail().equals(email)) {
+            throw new RuntimeException("Access denied"); // 🔒 Prevent access to other users
+        }
+
+        return task;
     }
 
-    public Task updateTask(Long id, Task updatedTask){
+    // ✅ Update a task, ensure ownership
+    public Task updateTask(Long id, Task updatedTask, String email) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Task Not Found"));
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        if (!task.getUser().getEmail().equals(email)) {
+            throw new RuntimeException("Access denied"); // 🔒 Security check
+        }
 
         task.setTitle(updatedTask.getTitle());
         task.setDescription(updatedTask.getDescription());
@@ -44,13 +54,19 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public void deleteTask(Long id) {
-        if (!taskRepository.existsById(id)) {
-            throw new RuntimeException("Task not found");
+    // ✅ Delete a task, ensure ownership
+    public void deleteTask(Long id, String email) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        if (!task.getUser().getEmail().equals(email)) {
+            throw new RuntimeException("Access denied");
         }
-        taskRepository.deleteById(id);
+
+        taskRepository.delete(task);
     }
 
+    // ✅ Get all tasks for the logged-in user
     public List<Task> getTasksByUser(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
