@@ -31,7 +31,7 @@ public class TaskService {
         Optional<Task> optionalTask = taskRepository.findById(id);
 
         if (optionalTask.isEmpty()) {
-            return null; // Task not found, frontend can handle gracefully
+            return null;
         }
 
         Task task = optionalTask.get();
@@ -48,7 +48,7 @@ public class TaskService {
                 .orElseThrow(() -> new RuntimeException("Task not found"));
 
         if (!task.getUser().getEmail().equals(email)) {
-            throw new RuntimeException("Access denied"); // 🔒 Security check
+            throw new RuntimeException("Access denied");
         }
 
         task.setTitle(updatedTask.getTitle());
@@ -59,6 +59,14 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
+    // ✅ Get all tasks for the logged-in user
+    public List<Task> getTasksByUser(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return taskRepository.findByUser(user);
+    }
+
     // ✅ Delete a task, ensure ownership
     public void deleteTask(Long id, String email) {
         Task task = taskRepository.findById(id)
@@ -67,15 +75,6 @@ public class TaskService {
         if (!task.getUser().getEmail().equals(email)) {
             throw new RuntimeException("Access denied");
         }
-
         taskRepository.delete(task);
-    }
-
-    // ✅ Get all tasks for the logged-in user
-    public List<Task> getTasksByUser(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        return taskRepository.findByUser(user);
     }
 }
