@@ -22,12 +22,12 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
 
-    //SIGNUP
+    // ✅ SIGNUP
     public LoginResponse createUser(UserRequest requestDTO) {
 
         Optional<User> existingUser = userRepo.findByEmail(requestDTO.getEmail());
         if (existingUser.isPresent()) {
-            return new LoginResponse("User already exists", null, null);
+            throw new RuntimeException("USER_ALREADY_EXISTS");
         }
 
         User user = userMapper.toEntity(requestDTO);
@@ -36,23 +36,22 @@ public class UserService {
 
         String token = jwtUtils.generateToken(user.getEmail());
         return new LoginResponse(
-                "User created successfully",
+                "SUCCESS",
                 userMapper.toResponseDTO(user),
                 token
         );
     }
 
-    //LOGIN
+    // ✅ LOGIN
     public LoginResponse loginUser(LoginRequest requestDTO) {
 
         Optional<User> optionalUser = userRepo.findByEmail(requestDTO.getEmail());
         if (optionalUser.isEmpty()) {
-            return new LoginResponse("USER_NOT_FOUND", null, null);
+            throw new RuntimeException("USER_NOT_FOUND");
         }
-
         User user = optionalUser.get();
         if (!passwordEncoder.matches(requestDTO.getPassword(), user.getPassword())) {
-            return new LoginResponse("INVALID_CREDENTIALS", null, null);
+            throw new RuntimeException("INVALID_CREDENTIALS");
         }
 
         String token = jwtUtils.generateToken(user.getEmail());
