@@ -1,9 +1,10 @@
 package com.TaskManagementSystem.Model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Getter
@@ -26,16 +27,25 @@ public class Task {
     private String description;
 
     @Column(nullable = false)
-    @NonNull
     private String status;
 
     @Column(nullable = false)
-    @NonNull
     private String priority;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference
-    private User user;
+    @JoinColumn(name = "assigned_to", nullable = false)
+    private User assignedTo;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by", nullable = false)
+    private User createdBy;
+
+    @ManyToOne
+    @JoinColumn(name = "project_id", nullable = true)
+    private Project project;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
 }

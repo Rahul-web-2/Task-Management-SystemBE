@@ -31,8 +31,16 @@ public class User {
     @NonNull
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "project_id")
     @JsonManagedReference
-    private List<Task> tasks;
+    private Project project;
+
+    @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL)
+    private List<Task> assignedTasks;
+
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Task> createdTasks;
 
 }
