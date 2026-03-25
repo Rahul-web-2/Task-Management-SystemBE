@@ -49,6 +49,7 @@ public class UserService {
         if (optionalUser.isEmpty()) {
             throw new RuntimeException("USER_NOT_FOUND");
         }
+
         User user = optionalUser.get();
         if (!passwordEncoder.matches(requestDTO.getPassword(), user.getPassword())) {
             throw new RuntimeException("INVALID_CREDENTIALS");

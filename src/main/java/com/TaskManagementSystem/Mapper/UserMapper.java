@@ -11,7 +11,9 @@ public interface UserMapper {
 
     // Define mapping methods here
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "tasks", ignore = true)
+    @Mapping(target = "project", ignore = true)
+    @Mapping(target = "assignedTasks", ignore = true)
+    @Mapping(target = "createdTasks", ignore = true)
     User toEntity(UserRequest dto);
     UserResponse toResponseDTO(User user);
 

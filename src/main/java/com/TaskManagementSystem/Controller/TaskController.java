@@ -1,6 +1,7 @@
 package com.TaskManagementSystem.Controller;
 
-import com.TaskManagementSystem.Model.Task;
+import com.TaskManagementSystem.DTO.Request.TaskRequest;
+import com.TaskManagementSystem.DTO.Response.TaskResponse;
 import com.TaskManagementSystem.Service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,43 +17,69 @@ public class TaskController {
 
     private final TaskService taskService;
 
-    // ✅ Create task for logged-in user
+    // ✅ CREATE TASK
     @PostMapping("/create")
-    public ResponseEntity<Task> createTask(@RequestBody Task task, Authentication auth) {
-        String email = auth.getName(); // comes from JWT filter
-        Task createdTask = taskService.createTask(email, task);
-        return ResponseEntity.status(201).body(createdTask);
-    }
+    public ResponseEntity<TaskResponse> createTask(@RequestBody TaskRequest request,
+                                                   Authentication auth) {
 
-    // ✅ Update task
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable Long id,
-                                           @RequestBody Task updatedTask,
-                                           Authentication auth) {
         String email = auth.getName();
-        Task task = taskService.updateTask(id, updatedTask, email);
-        return ResponseEntity.ok(task);
+        TaskResponse response = taskService.createTask(request, email);
+
+        return ResponseEntity.status(201).body(response);
     }
 
-    // ✅ Get task by ID
+    // ✅ GET TASK BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable Long id, Authentication auth) {
+    public ResponseEntity<TaskResponse> getTaskById(@PathVariable Long id,
+                                                    Authentication auth) {
+
         String email = auth.getName();
-        Task task = taskService.getTaskById(id, email);
-        return ResponseEntity.ok(task);
+        return ResponseEntity.ok(taskService.getTaskById(id, email));
     }
 
-    // ✅ Get all tasks for logged-in user
+    // ✅ UPDATE TASK
+    @PutMapping("/{id}")
+    public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id,
+                                                   @RequestBody TaskRequest request,
+                                                   Authentication auth) {
+
+        String email = auth.getName();
+        return ResponseEntity.ok(taskService.updateTask(id, request, email));
+    }
+
+    // ✅ GET ALL TASKS (personal + project)
     @GetMapping
-    public ResponseEntity<List<Task>> getTasksByUser(Authentication auth) {
+    public ResponseEntity<List<TaskResponse>> getAllTasks(Authentication auth) {
+
         String email = auth.getName();
-        List<Task> tasks = taskService.getTasksByUser(email);
-        return ResponseEntity.ok(tasks);
+        return ResponseEntity.ok(taskService.getAllTask(email));
     }
 
-    // ✅ Delete task
+    // ✅ GET PERSONAL TASKS
+    @GetMapping("/personal")
+    public ResponseEntity<List<TaskResponse>> getPersonalTasks(Authentication auth) {
+
+        String email = auth.getName();
+        return ResponseEntity.ok(taskService.getPersonalTask(email));
+    }
+
+    // ✅ GET PROJECT TASKS
+    @GetMapping("/project/{projectId}")
+    public ResponseEntity<List<TaskResponse>> getTasksByProject(
+            @PathVariable Long projectId,
+            Authentication auth) {
+
+        String email = auth.getName();
+        return ResponseEntity.ok(
+                taskService.getProjectTask(email, projectId)
+        );
+    }
+
+    // ✅ DELETE TASK
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id, Authentication auth) {
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id,
+                                           Authentication auth) {
+
         String email = auth.getName();
         taskService.deleteTask(id, email);
         return ResponseEntity.noContent().build();
