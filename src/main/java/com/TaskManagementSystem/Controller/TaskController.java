@@ -6,6 +6,7 @@ import com.TaskManagementSystem.Service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class TaskController {
 
     // ✅ CREATE TASK
     @PostMapping("/create")
-    public ResponseEntity<TaskResponse> createTask(@RequestBody TaskRequest request,
+    public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody TaskRequest request,
                                                    Authentication auth) {
 
         String email = auth.getName();
@@ -38,9 +39,9 @@ public class TaskController {
     }
 
     // ✅ UPDATE TASK
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id,
-                                                   @RequestBody TaskRequest request,
+                                                   @Valid @RequestBody TaskRequest request,
                                                    Authentication auth) {
 
         String email = auth.getName();
@@ -76,7 +77,7 @@ public class TaskController {
     }
 
     // ✅ DELETE TASK
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id,
                                            Authentication auth) {
 

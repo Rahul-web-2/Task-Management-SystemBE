@@ -2,7 +2,8 @@ package com.TaskManagementSystem.DTO.Response;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -24,5 +25,6 @@ public class TaskResponse {
     private Long projectId;
     private String projectName;
 
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
+    private ZonedDateTime updatedAt;
 }

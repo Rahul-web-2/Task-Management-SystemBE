@@ -20,27 +20,24 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-    @NonNull
     private String name;
 
     @Column(nullable = false, unique = true)
-    @NonNull
     private String email;
 
     @Column(nullable = false)
-    @NonNull
     private String password;
 
     @ManyToOne
     @JoinColumn(name = "project_id")
-    @JsonManagedReference
     private Project project;
 
+    @JsonManagedReference("assigned-tasks")
     @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL)
     private List<Task> assignedTasks;
 
+    @JsonManagedReference("created-tasks")
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL)
-    @JsonManagedReference
     private List<Task> createdTasks;
 
 }

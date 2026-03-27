@@ -11,4 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/projects")
 @RequiredArgsConstructor
 public class ProjectController {
+    private final ProjectService projectService;
+
+
 }

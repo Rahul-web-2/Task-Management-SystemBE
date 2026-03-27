@@ -24,6 +24,8 @@ public class TaskService {
     private final ProjectRepo projectRepo;
     private final TaskMapper taskMapper;
 
+    // ================= HELPER METHODS =================
+
     private User getUserByEmail(String email) {
         return userRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -35,65 +37,98 @@ public class TaskService {
     }
 
     private void validateAccess(Task task, String email) {
-        boolean isAssignedUser = task.getAssignedTo().getEmail().equals(email);
+
+        boolean isAssignedUser = task.getAssignedTo() != null &&
+                task.getAssignedTo().getEmail().equals(email);
+
         boolean isProjectHead = task.getProject() != null &&
+                task.getProject().getCreatedBy() != null &&
                 task.getProject().getCreatedBy().getEmail().equals(email);
 
-        if (!isAssignedUser && !isProjectHead) {
+        boolean isCreator = task.getCreatedBy() != null &&
+                task.getCreatedBy().getEmail().equals(email);
+
+        if (!isAssignedUser && !isProjectHead && !isCreator) {
             throw new RuntimeException("Access denied");
         }
     }
 
-    // Create Task
+    // ================= CREATE TASK =================
+
     public TaskResponse createTask(TaskRequest requestDTO, String email) {
+
         User user = getUserByEmail(email);
-
         Task task = taskMapper.toEntity(requestDTO);
-        task.setCreatedBy(user);
 
-        User assignedUser = (requestDTO.getAssignedToId() !=null)
-                ? userRepo.findById(requestDTO.getAssignedToId())
-                . orElseThrow(()-> new RuntimeException("Assigned user not found"))
-                :user;
+        // CASE 1: PERSONAL TASK
+        if (requestDTO.getProjectId() == null) {
 
-        task.setAssignedTo(assignedUser);
+            task.setCreatedBy(user);
+            task.setAssignedTo(user);   // 🔥 FIXED
+            task.setProject(null);
+        }
 
-        if(requestDTO.getProjectId() != null) {
+        // CASE 2: PROJECT TASK
+        else {
+
             Project project = projectRepo.findById(requestDTO.getProjectId())
                     .orElseThrow(() -> new RuntimeException("Project not found"));
 
-            if (assignedUser.getProject() == null ||
-                    !assignedUser.getProject().getId().equals(project.getId())) {
-                throw new RuntimeException("User not part of this project");
+            // Only project head can assign tasks
+            if (project.getCreatedBy() == null ||
+                    !project.getCreatedBy().getEmail().equals(email)) {
+                throw new RuntimeException("Only the project head can assign tasks");
             }
 
+            // Assigned user is required
+            if (requestDTO.getAssignedToId() == null) {
+                throw new RuntimeException("Assigned user is required for project tasks");
+            }
+
+            User assignedUser = userRepo.findById(requestDTO.getAssignedToId())
+                    .orElseThrow(() -> new RuntimeException("Assigned user not found"));
+
+            // Check user belongs to project
+            if (assignedUser.getProject() == null ||
+                    !assignedUser.getProject().getId().equals(project.getId())) {
+                throw new RuntimeException("Assigned user is not a member of this project");
+            }
+
+            task.setCreatedBy(user);
+            task.setAssignedTo(assignedUser);
             task.setProject(project);
         }
 
-       Task saveTask = taskRepo.save(task);
-       return taskMapper.toResponseDTO(saveTask);
+        Task savedTask = taskRepo.save(task);
+        return taskMapper.toResponseDTO(savedTask);
     }
 
-    // Update Task
+    // ================= UPDATE TASK =================
+
     public TaskResponse updateTask(Long id, TaskRequest requestDTO, String email) {
         Task task = getTaskOrThrow(id);
-        validateAccess(task , email);
+        validateAccess(task, email);
 
+        task.setTitle(requestDTO.getTitle());
+        task.setDescription(requestDTO.getDescription());
+        task.setPriority(requestDTO.getPriority());
         task.setStatus(requestDTO.getStatus());
 
         Task updatedTask = taskRepo.save(task);
         return taskMapper.toResponseDTO(updatedTask);
     }
 
-    // Get Task By ID
+    // ================= GET TASK BY ID =================
+
     public TaskResponse getTaskById(Long id, String email) {
         Task task = getTaskOrThrow(id);
-        validateAccess(task , email);
+        validateAccess(task, email);
 
         return taskMapper.toResponseDTO(task);
     }
 
-    // Get Project Task
+    // ================= GET PROJECT TASKS =================
+
     public List<TaskResponse> getProjectTask(String email, long projectId) {
         User user = getUserByEmail(email);
 
@@ -108,8 +143,9 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
-    // Get Personal Task
-    public List<TaskResponse> getPersonalTask(String email){
+    // ================= GET PERSONAL TASKS =================
+
+    public List<TaskResponse> getPersonalTask(String email) {
         User user = getUserByEmail(email);
 
         return taskRepo.findByAssignedToAndProjectIsNull(user)
@@ -118,8 +154,9 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
-    // GET ALL TASKS
-    public List<TaskResponse> getAllTask(String email){
+    // ================= GET ALL TASKS =================
+
+    public List<TaskResponse> getAllTask(String email) {
         User user = getUserByEmail(email);
 
         return taskRepo.findByAssignedTo(user)
@@ -128,7 +165,8 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
-    // Delete Task
+    // ================= DELETE TASK =================
+
     public void deleteTask(Long id, String email) {
         Task task = getTaskOrThrow(id);
         validateAccess(task, email);

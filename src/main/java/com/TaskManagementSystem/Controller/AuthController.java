@@ -7,6 +7,7 @@ import com.TaskManagementSystem.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,12 +24,12 @@ public class AuthController {
 
     //SIGNUP
     @PostMapping("/signUp")
-    public ResponseEntity<LoginResponse> createUser(@RequestBody UserRequest request,
+    public ResponseEntity<LoginResponse> createUser(@Valid @RequestBody UserRequest request,
                                                     HttpServletResponse response) {
 
         LoginResponse res = userService.createUser(request);
 
-        if ("User already exists".equals(res.getMessage())) {
+        if ("USER_ALREADY_EXISTS".equals(res.getMessage())) {
             return ResponseEntity.status(409)
                     .cacheControl(CacheControl.noStore())
                     .body(res);
@@ -54,7 +55,7 @@ public class AuthController {
 
     //LOGIN
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request,
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request,
                                                HttpServletResponse response) {
 
         LoginResponse res = userService.loginUser(request);
@@ -75,7 +76,7 @@ public class AuthController {
                 //SET COOKIE
                 ResponseCookie cookie = ResponseCookie.from("token", res.getToken())
                         .httpOnly(true)
-                        .secure(true) // ⚠️ false for local dev
+                        .secure(true) // ⚠️ false in local (http), true in prod (https)
                         .path("/")
                         .maxAge(Duration.ofHours(1))
                         .sameSite("None")
@@ -95,7 +96,7 @@ public class AuthController {
 
         ResponseCookie cookie = ResponseCookie.from("token", "")
                 .httpOnly(true)
-                .secure(true)
+                .secure(true) // ⚠️ false in local (http), true in prod (https)
                 .path("/")
                 .maxAge(0)
                 .sameSite("None")

@@ -1,11 +1,11 @@
 package com.TaskManagementSystem.Model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -21,11 +21,9 @@ public class Project {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    @NonNull
     private String name;
 
     @Column(nullable = false)
-    @NonNull
     private String description;
 
     @Column(nullable = false)
@@ -33,21 +31,18 @@ public class Project {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @Column(nullable = false)
-    @NonNull
     private LocalDate dueDate;
 
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "project")
     private List<User> users;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Task> tasks;
 }
