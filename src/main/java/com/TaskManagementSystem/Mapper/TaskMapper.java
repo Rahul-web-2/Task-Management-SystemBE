@@ -9,24 +9,32 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface TaskMapper {
 
-    // ✅ DTO → Entity
+    // ================= DTO → ENTITY =================
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "assignedTo", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "project", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     Task toEntity(TaskRequest taskRequest);
 
-    // ✅ Entity → DTO
-    @Mapping(target = "assignedToId", source = "assignedTo.id")
-    @Mapping(target = "assignedToName", source = "assignedTo.name")
+    // ================= ENTITY → DTO =================
 
-    @Mapping(target = "createdById", source = "createdBy.id")
-    @Mapping(target = "createdByName", source = "createdBy.name")
+    @Mapping(target = "assignedToId",
+            expression = "java(task.getAssignedTo() != null ? task.getAssignedTo().getId() : null)")
+    @Mapping(target = "assignedToName",
+            expression = "java(task.getAssignedTo() != null ? task.getAssignedTo().getName() : null)")
+
+    @Mapping(target = "createdById",
+            expression = "java(task.getCreatedBy() != null ? task.getCreatedBy().getId() : null)")
+    @Mapping(target = "createdByName",
+            expression = "java(task.getCreatedBy() != null ? task.getCreatedBy().getName() : null)")
 
     @Mapping(target = "projectId",
             expression = "java(task.getProject() != null ? task.getProject().getId() : null)")
     @Mapping(target = "projectName",
             expression = "java(task.getProject() != null ? task.getProject().getName() : null)")
+
     TaskResponse toResponseDTO(Task task);
 }

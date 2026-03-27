@@ -1,5 +1,6 @@
 package com.TaskManagementSystem.Service;
 
+import com.TaskManagementSystem.Mapper.ProjectMapper;
 import com.TaskManagementSystem.Model.Project;
 import com.TaskManagementSystem.Model.User;
 import com.TaskManagementSystem.Repository.ProjectRepo;
@@ -13,7 +14,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProjectService {
 
-    private final ProjectRepo projectRepository;
-    private final UserRepo userRepository;
+    private final ProjectRepo projectRepo;
+    private final UserRepo userRepo;
+    private final ProjectMapper projectMapper;
 
 }
