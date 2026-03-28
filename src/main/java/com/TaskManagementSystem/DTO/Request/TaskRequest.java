@@ -14,10 +14,10 @@ import lombok.*;
 public class TaskRequest {
 
     @NotBlank(message = "Title is required")
-    @Size(min = 3, max = 50, message = "Title must be between 3 and 20 characters")
+    @Size(min = 3, max = 50, message = "Title must be between 3 and 50 characters")
     @Pattern(
             regexp = "^[a-zA-Z @#$%^&*()_+=!.\\-]+$",
-            message = "Title can only contain letters and @#$%^&*()_+=!.-"
+            message = "Title can only contain letters and special characters (@#$%^&*()_+=!.-)"
     )
     private String title;
 

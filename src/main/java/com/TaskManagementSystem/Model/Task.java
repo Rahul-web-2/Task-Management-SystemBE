@@ -64,13 +64,11 @@ public class Task {
     @JoinColumn(name = "project_id", nullable = true)
     private Project project;
 
-    @CreationTimestamp
+
     @Column(nullable = false, updatable = false)
-    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate createdAt;
 
-    @UpdateTimestamp
+
     @Column(nullable = false)
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm", timezone = "Asia/Kolkata")
     private ZonedDateTime updatedAt;
 }
